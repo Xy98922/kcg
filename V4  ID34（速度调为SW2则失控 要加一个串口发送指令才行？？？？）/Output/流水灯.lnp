@@ -39,6 +39,7 @@
 "..\..\output\sdio_sd.o"
 "..\..\output\yn800.o"
 "..\..\output\td_2d.o"
+"..\..\output\adc.o"
 --strict --scatter "..\..\Output\Á÷Ë®µÆ.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

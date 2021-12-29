@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_HD, USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\Libraries\CMSIS;..\..\User;..\..\Libraries\FWlib\inc;..\..\User\Led;..\..\User\cpu;..\..\User\AT24C02;..\..\User\MPU6050;..\..\User\LCD240x320_ILI9341;..\..\User\W25Q16;..\..\User\stm32f10x_pwm;..\..\User\SDIO_SD;..\..\User\LCD240x320_Touch;..\..\ff9\src;..\..\ff9\src\option;..\..\User\BMP180;..\..\User\HMC5883;..\..\User\IMU;..\..\User\IO_IIC;..\..\User\Kalman_Filter;..\..\User\NRF_24L01;..\..\User\Scope_API;..\..\User\Seven_Lab_MiniIMU;..\..\User\WS2812;..\..\User\ChineseChess;..\..\User\speed_control;..\..\User\bsp_can;..\..\User\bsp_uart;..\..\User\DBUS;..\..\User\DJI_Motor;..\..\User\LN3X;..\..\User\MPU6050\eMPL;..\..\User\MPU6050;..\..\User\SDIO_SD;..\..\User\YN800;..\..\User\TD</IncludePath>
+              <IncludePath>..\..\Libraries\CMSIS;..\..\User;..\..\Libraries\FWlib\inc;..\..\User\Led;..\..\User\cpu;..\..\User\AT24C02;..\..\User\MPU6050;..\..\User\LCD240x320_ILI9341;..\..\User\W25Q16;..\..\User\stm32f10x_pwm;..\..\User\SDIO_SD;..\..\User\LCD240x320_Touch;..\..\ff9\src;..\..\ff9\src\option;..\..\User\BMP180;..\..\User\HMC5883;..\..\User\IMU;..\..\User\IO_IIC;..\..\User\Kalman_Filter;..\..\User\NRF_24L01;..\..\User\Scope_API;..\..\User\Seven_Lab_MiniIMU;..\..\User\WS2812;..\..\User\ChineseChess;..\..\User\speed_control;..\..\User\bsp_can;..\..\User\bsp_uart;..\..\User\DBUS;..\..\User\DJI_Motor;..\..\User\LN3X;..\..\User\MPU6050\eMPL;..\..\User\MPU6050;..\..\User\SDIO_SD;..\..\User\YN800;..\..\User\TD;..\..\User\ADC</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -621,6 +621,11 @@
               <FileName>td_2d.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\User\TD\td_2d.c</FilePath>
+            </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\User\ADC\adc.c</FilePath>
             </File>
           </Files>
         </Group>

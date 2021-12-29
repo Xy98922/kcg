@@ -907,11 +907,17 @@ void servoinit(int16_t angle1)
 	TIM_SetCompare1(TIM3,54);     //  PA6
 
 	
-	PWM_config_Init(PWM1, PWM_Channel_1 , 0, 0);
-	TIM_CtrlPWMOutputs(TIM3,ENABLE);
-	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable); 
-	TIM_ARRPreloadConfig(TIM3, ENABLE);
-	TIM_SetCompare2(TIM3,54);      // PA7,28
+//	PWM_config_Init(PWM1, PWM_Channel_1 , 0, 0);
+//	TIM_CtrlPWMOutputs(TIM3,ENABLE);
+//	TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable); 
+//	TIM_ARRPreloadConfig(TIM3, ENABLE);
+//	TIM_SetCompare2(TIM3,54);      // PA7,28
+	
+	PWM_config_Init(PWM2, PWM_Channel_1 , 0, 0);
+	TIM_CtrlPWMOutputs(TIM4,ENABLE);
+	TIM_OC1PreloadConfig(TIM4, TIM_OCPreload_Enable); 
+	TIM_ARRPreloadConfig(TIM4, ENABLE);
+	TIM_SetCompare2(TIM4,54);      // PB7,28
 
 }
 void KEY_Init(void) //IO≥ı ºªØ

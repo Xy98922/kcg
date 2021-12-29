@@ -38,6 +38,7 @@ unsigned char U2dat_value_last=0;
 imudata imudata1;
 uint8_t USART1_RX_BUF[26];
 uint8_t USART3_RX_BUF[14];
+uint8_t USART2_RX_BUF[88];
 uint8_t USART3Rec_flag;
 int USART3Rec_speedx;
 int USART3Rec_speedw;
@@ -233,31 +234,31 @@ void USART3_IRQHandler(void)
 
 	if(USART3_RX_BUF[0]!=0X3e)
 		{
-			UART_send_string(USART3,"buf[0]=:  ");
-			UART_send_data(USART3, USART3_RX_BUF[0]);UART_send_string(USART3,"\r\n");
+//			UART_send_string(USART3,"buf[0]=:  ");
+//			UART_send_data(USART3, USART3_RX_BUF[0]);UART_send_string(USART3,"\r\n");
 			Rx_Sta=0;
 			return;
 	  }
 		if(USART3_RX_BUF[1]!=0Xa2)
 		{
-			UART_send_string(USART3,"buf[2]=:  ");
-			UART_send_intdata(USART3, USART3_RX_BUF[1]);UART_send_string(USART3,"\r\n");
+//			UART_send_string(USART3,"buf[2]=:  ");
+//			UART_send_intdata(USART3, USART3_RX_BUF[1]);UART_send_string(USART3,"\r\n");
 			Rx_Sta=0;
 			return;
 	  }
 		if(USART3_RX_BUF[2]!=0X01&&USART3_RX_BUF[2]!=0xFE)  //ID验证
 		{
-			UART_send_string(USART3,"buf[3]=:  ");
-			UART_send_intdata(USART3, USART3_RX_BUF[2]);UART_send_string(USART3,"\r\n");
+//			UART_send_string(USART3,"buf[3]=:  ");
+//			UART_send_intdata(USART3, USART3_RX_BUF[2]);UART_send_string(USART3,"\r\n");
 			Rx_Sta=0;
 			return;
 	  }
 		if(USART3_RX_BUF[13]!=(u8)(USART3_RX_BUF[7]+USART3_RX_BUF[6]+USART3_RX_BUF[8]+USART3_RX_BUF[5]+USART3_RX_BUF[12]+USART3_RX_BUF[11]+USART3_RX_BUF[10]+USART3_RX_BUF[9]))
 		{
-			UART_send_string(USART3,"帧尾错误:  ");
-			UART_send_intdata(USART3, USART3_RX_BUF[13]);UART_send_string(USART3,"\r\n");
-			UART_send_char(USART3, USART3_RX_BUF[13]);
-			UART_send_char(USART3,USART3_RX_BUF[7]+USART3_RX_BUF[6]+USART3_RX_BUF[8]+USART3_RX_BUF[5]+USART3_RX_BUF[12]+USART3_RX_BUF[11]+USART3_RX_BUF[10]+USART3_RX_BUF[9]);
+//			UART_send_string(USART3,"帧尾错误:  ");
+//			UART_send_intdata(USART3, USART3_RX_BUF[13]);UART_send_string(USART3,"\r\n");
+//			UART_send_char(USART3, USART3_RX_BUF[13]);
+//			UART_send_char(USART3,USART3_RX_BUF[7]+USART3_RX_BUF[6]+USART3_RX_BUF[8]+USART3_RX_BUF[5]+USART3_RX_BUF[12]+USART3_RX_BUF[11]+USART3_RX_BUF[10]+USART3_RX_BUF[9]);
 			Rx_Sta=0;
 			return;
 	  }
@@ -282,86 +283,39 @@ void USART3_IRQHandler(void)
 }
  
 
-// USRT2 收什么发什么
+// USRT2->IMUDATA 立刻 USART4->IMUDATA
 void USART2_IRQHandler(void)
 {
-	uint8_t dat_value;
- U2dat_value_last = U2dat_value;
+
+
+	static unsigned char ucRxBuffer[250];
+	static unsigned char ucRxCnt = 0;	
+
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
-	{ 	
-			USART_ClearFlag(USART2, USART_FLAG_RXNE);
-			USART_ClearITPendingBit(USART2,USART_IT_RXNE);
-			dat_value = USART_ReceiveData(USART2);	
-	  	UART_send_char(USART2,	dat_value);
-			 
+	{
+	ucRxBuffer[ucRxCnt++]=USART_ReceiveData(USART2);	
+	if (ucRxBuffer[0]!=0x55) 
+	{
+		ucRxCnt=0;
+		return;
 	}
-
-		//数据包解析协议
-	U2dat_value=dat_value;
+	if (ucRxCnt<2) {	return;}
+	if (ucRxBuffer[1]!=0x51) {	
+	ucRxCnt=0;
+	return;}
+	if (ucRxCnt<44) {	return;}
+	else{
+		if(ucRxBuffer[1]==0x51&&ucRxBuffer[12]==0x52&&ucRxBuffer[23]==0x53&&ucRxBuffer[34]==0x54)
+		UART_send_buffer(USART3,ucRxBuffer,44);
+	 else ucRxCnt=0;
+	} 
 	
-	if((U2dat_value == 0XEA )&& (U2dat_value_last == 0XAE))
-	{
-			ReCont_2 =0;
-			Reflag_2 = 0x01;
-			UART2_ReBuff[ReCont_2++] = U2dat_value_last;
-			UART2_ReBuff[ReCont_2++] = U2dat_value; //找到了帧头
-		  UART2_Flag=0x01;
-		  
-	}
-	else if(Reflag_2 == 0x01 && ReCont_2>=2) 
-	{  
-			if(ReCont_2<3)
-			{
-				UART2_ReBuff[ReCont_2++] = U2dat_value; //找到数据帧长度	
-			}
-			else if(ReCont_2 < (UART2_ReBuff[2]+2)) 
-			{
-				UART2_ReBuff[ReCont_2++] = U2dat_value;		  
-				//UART_send_char(USART2,U2dat_value);	
-			}
-			else if((ReCont_2 == (UART2_ReBuff[2]+2)) && (U2dat_value == 0xEF)) 
-			{	
-				UART2_ReBuff[ReCont_2++] = U2dat_value;
-			}
-			else if((ReCont_2 == (UART2_ReBuff[2]+3)) && (U2dat_value == 0xFE)) 
-			{			
-				UART2_ReBuff[ReCont_2++] = U2dat_value;
-				UART2_ReCont=ReCont_2;  
-				UART2_Reflag=01; 				
-				DJI_Motor_WriteData_In_Buff(UART2_ReBuff,ReCont_2);
-				Reflag_2 =0x00; 	
-			}
-			else
-			{
-				Reflag_2=0; 
-				ReCont_2=0;
-			}
-	}
-	else
-	{
-			ReCont_2 =0;
-			Reflag_2 = 0x00;
+		
 	}
 	
-  if(USART_GetITStatus(USART2, USART_FLAG_PE) != RESET)
-	{   
-		USART_ReceiveData(USART2);
-		USART_ClearFlag(USART2, USART_FLAG_PE);
-	}
+	 //USART_ClearITPendingBit(USART2, USART_IT_RXNE); 
+	 ucRxCnt=0;
 
-	if(USART_GetITStatus(USART2, USART_FLAG_ORE) != RESET)
-	{   
-		USART_ReceiveData(USART2);
-		USART_ClearFlag(USART2, USART_FLAG_ORE);
-	}
-
-	if(USART_GetITStatus(USART2, USART_FLAG_FE) != RESET)
-	{   
-		USART_ReceiveData(USART2);
-		USART_ClearFlag(USART2, USART_FLAG_FE);
-	}
-
-	USART_ClearITPendingBit(USART2,USART_IT_RXNE);
 }
 
  
@@ -416,9 +370,17 @@ void EXTI9_5_IRQHandler(void)
   Main_Delay(500);
   if(DC_OVER==1)	 //按键KEY0
 	{
-	 TIM_SetCompare1(TIM3,54); 
+	 TIM_SetCompare1(TIM3,54);	 
+								TIM_SetCompare1(TIM4,54);
+                TIM_SetCompare2(TIM3,54);	
 	 LED2_FLIP;
-	 Main_Delay(10000);
+	 TIM_Cmd(TIM3,ENABLE);    
+								TIM_Cmd(TIM4,ENABLE); 
+								Timer2_Counter6=0;
+		Main_Delay(1000);
+		TIM_Cmd(TIM3,DISABLE);    
+								TIM_Cmd(TIM4,DISABLE); 
+		
 	}	
 
 	EXTI_ClearITPendingBit(EXTI_Line7);  //清除LINE7上的中断标志位  

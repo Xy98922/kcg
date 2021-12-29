@@ -24,6 +24,7 @@
 #include "DBUS.h"
 #include "DJI_Motor.h"
 #include "ln3x.h"
+#include "adc.h"
 /*********************************************************/
 /**********************宏定义****************************/
 #define EnableInterrupt 	__set_PRIMASK(0) //总中断 写‘0‘ 开总中断   ’1‘关总中断
@@ -105,8 +106,9 @@ int main(void)
 		 Timer_2to7_Generalfuncation_start(TIM2);
      UART_send_string(USART2,"Init Successful ....\n");//字符串函数
 		 servoinit(dbus_rc.ch2-dbus_rc.ch2_offset);        //pwm初始化
-	   KEY_Init();
-	   EXTIX_Init();
+//	   KEY_Init();
+//	   EXTIX_Init();
+	   Adc_Init();
 	   GPIO_ResetBits(GPIOD,GPIO_Pin_10);
 	   GPIO_SetBits(GPIOD,GPIO_Pin_11);
 		 while(1)
@@ -130,29 +132,35 @@ int main(void)
 								}	
 							if((dbus_rc.sw1 !=1) && (dbus_rc.available)&&(MS_Flag==0)) //使能遥控器模式
 							{				
-								if(beforevalch13-dbus_rc.ch13!=0||beforevalch7-dbus_rc.ch7!=0||beforevalch8-dbus_rc.ch8!=0)
+								if(beforevalch13-dbus_rc.ch13!=0||beforevalch7-dbus_rc.ch7!=0||beforevalch8-dbus_rc.ch8!=0||(Get_Adc_Average(5)/4096*3300-2422)/60>=2||(Get_Adc_Average(5)/4096*3300-2422)/60<=-2)
 							{
 								TIM_Cmd(TIM3,ENABLE);    
 								TIM_Cmd(TIM4,ENABLE); 
 								Timer2_Counter6=0;							
 							}
+							if((Get_Adc_Average(5)/4096*3300-2422)/60>=2||(Get_Adc_Average(5)/4096*3300-2422)/60<=-2)
+							{
+							dbus_rc.ch7=54;
+							dbus_rc.ch8=54;
+							dbus_rc.ch13=54;
+							}
                 TIM_SetCompare1(TIM3,dbus_rc.ch7);	 
 								TIM_SetCompare1(TIM4,dbus_rc.ch8);
-                TIM_SetCompare2(TIM3,dbus_rc.ch13);	 								//新机对接	
+                TIM_SetCompare2(TIM4,dbus_rc.ch13);	 								//新机对接	
 								beforevalch7=dbus_rc.ch7;
 								beforevalch8=dbus_rc.ch8;
 								beforevalch13=dbus_rc.ch13;
-							 if(Timer2_Counter6>=500){								 							 
+							 if(Timer2_Counter6>=1000){								 							 
 								TIM_Cmd(TIM3,DISABLE);    
 								TIM_Cmd(TIM4,DISABLE);
-								 Timer2_Counter6=500;		            //数字舵机只发送一次数据就行					 
+							  Timer2_Counter6=1000;		            //数字舵机只发送一次数据就行					 
 							 }    						
 								Timer2_Counter1=0; //清空定时计数器
 								if(dbus_rc.sw2 ==1) //1 档模式 最大1m/s
 								{
 									DiffX2_Wheel_Speed_Model((dbus_rc.ch2-dbus_rc.ch2_offset)*0.00152,(dbus_rc.ch1-dbus_rc.ch1_offset)*0.00152);
 								  UART_send_string(USART2,"YIAKONGQISET:  ");UART_send_intdata(USART2,dbus_rc.ch2-dbus_rc.ch2_offset);UART_send_char(USART2,'\t');
-
+                  UART_send_string(USART2,"ADC:  ");UART_send_intdata(USART2,Get_Adc());UART_send_char(USART2,'\t');
 								}
 								else if(dbus_rc.sw2 ==3) //2 档模式 最大2m/s
 								{

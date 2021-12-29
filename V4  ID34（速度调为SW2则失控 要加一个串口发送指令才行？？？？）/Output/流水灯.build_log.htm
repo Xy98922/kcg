@@ -21,13 +21,24 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.0.7.0
 Dialog DLL:      TCM.DLL V1.36.5.0
  
 <h2>Project:</h2>
-C:\Users\X\Desktop\V4  ID34（速度调为SW2则失控 要加一个串口发送指令才行？？？？）\Project\RVMDK（uv4）\iSO-STM32.uvprojx
-Project File Date:  04/19/2021
+C:\Users\X\Desktop\KcgV4 git\V4  ID34（速度调为SW2则失控 要加一个串口发送指令才行？？？？）\Project\RVMDK（uv4）\iSO-STM32.uvprojx
+Project File Date:  12/22/2021
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 6 (build 750)', folder: 'D:\MDK\ARM\ARMCC\Bin'
 Build target 'Led'
-"..\..\Output\流水灯.axf" - 0 Error(s), 0 Warning(s).
+compiling stm32f10x_it.c...
+..\..\User\stm32f10x_it.c(174): warning:  #177-D: variable "ctlPkg1"  was declared but never referenced
+  	newPkg(4) ctlPkg1={8,0x90,0x90,0x30,0x00,{0x00,0x00,0x00,0x00}};//注意包格式
+..\..\User\stm32f10x_it.c(189): warning:  #550-D: variable "clear"  was set but never used
+  	uint8_t clear = 0;
+..\..\User\stm32f10x_it.c(214): warning:  #177-D: variable "clear"  was declared but never referenced
+  	uint8_t clear = 0;
+..\..\User\stm32f10x_it.c: 3 warnings, 0 errors
+linking...
+Program Size: Code=37364 RO-data=348 RW-data=260 ZI-data=3180  
+FromELF: creating hex file...
+"..\..\Output\流水灯.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -41,7 +52,7 @@ Package Vendor: Keil
   D:\MDK\Keil\STM32F1xx_DFP\2.3.0\Device\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:00
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

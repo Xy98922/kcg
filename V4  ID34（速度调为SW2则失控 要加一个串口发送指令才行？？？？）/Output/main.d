@@ -27,3 +27,4 @@
 ..\..\output\main.o: ..\..\User\DBUS\DBUS.h
 ..\..\output\main.o: ..\..\User\DJI_Motor\DJI_Motor.h
 ..\..\output\main.o: ..\..\User\LN3X\ln3x.h
+..\..\output\main.o: ..\..\User\ADC\adc.h
